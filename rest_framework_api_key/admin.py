@@ -2,7 +2,6 @@ import typing
 
 from django.contrib import admin, messages
 
-from ._helpers import generate_key
 from .models import APIKey
 
 
@@ -29,18 +28,14 @@ class APIKeyAdmin(admin.ModelAdmin):
             fields = fields + ("name", "revoked", "expiry_date")
         return fields
 
-    def save_model(self, request, obj: APIKey, form, change):
+    def save_model(self, request, obj: APIKey, form=None, change: bool = None):
         created = not obj.pk
 
         if created:
-            generated_key, prefix, hashed_key = generate_key()
-            obj.prefix = prefix
-            obj.hashed_key = hashed_key
-
+            key = self.model.objects.assign_key(obj)
             obj.save()
-
             message = (
-                "The API key for {} is: {}. ".format(obj.name, generated_key)
+                "The API key for {} is: {}. ".format(obj.name, key)
                 + "Please store it somewhere safe: "
                 + "you will not be able to see it again."
             )
