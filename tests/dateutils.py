@@ -1,5 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-NOW = datetime.now()
+from django.utils import timezone
+
+NOW = timezone.now()
 TOMORROW = NOW + timedelta(days=1)
 YESTERDAY = NOW - timedelta(days=1)
